@@ -51,7 +51,7 @@ resources/views/
 1. Clone project
 
 ```bash
-git clone https://github.com/username/nama-project.git
+git clone https://github.com/Farelle009/PelacakAlumni.git
 cd nama-project
 ```
 
