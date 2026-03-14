@@ -16,6 +16,7 @@ class Alumni extends Model
     public const STATUS_TERIDENTIFIKASI = 'Teridentifikasi';
     public const STATUS_PERLU_VERIFIKASI = 'Perlu Verifikasi';
     public const STATUS_TIDAK_DITEMUKAN = 'Tidak Ditemukan';
+    public const STATUS_SEDANG_DILACAK = 'sedang_dilacak';
 
     protected $fillable = [
         'nim',

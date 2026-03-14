@@ -13,6 +13,7 @@ class TrackingResult extends Model
     public const STATUS_KEMUNGKINAN_KUAT = 'Kemungkinan Kuat';
     public const STATUS_PERLU_VERIFIKASI = 'Perlu Verifikasi';
     public const STATUS_TIDAK_COCOK = 'Tidak Cocok';
+    public const STATUS_SEDANG_DILACAK = 'sedang_dilacak';
 
     protected $fillable = [
         'alumni_id',

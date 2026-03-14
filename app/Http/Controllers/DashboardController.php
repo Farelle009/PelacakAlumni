@@ -5,21 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\Alumni;
 use App\Models\TrackingResult;
 use App\Models\TrackingSource;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
     public function index(): View
     {
-        $totalAlumni = Alumni::count();
+        // Single query — group all status counts in one round-trip
+        $statusCounts = Alumni::query()
+            ->select('status_pelacakan', DB::raw('count(*) as total'))
+            ->groupBy('status_pelacakan')
+            ->pluck('total', 'status_pelacakan');
 
-        $totalBelumDilacak = Alumni::where('status_pelacakan', Alumni::STATUS_BELUM_DILACAK)->count();
-        $totalTeridentifikasi = Alumni::where('status_pelacakan', Alumni::STATUS_TERIDENTIFIKASI)->count();
-        $totalPerluVerifikasi = Alumni::where('status_pelacakan', Alumni::STATUS_PERLU_VERIFIKASI)->count();
-        $totalTidakDitemukan = Alumni::where('status_pelacakan', Alumni::STATUS_TIDAK_DITEMUKAN)->count();
+        $totalAlumni          = $statusCounts->sum();
+        $totalBelumDilacak    = (int) ($statusCounts[Alumni::STATUS_BELUM_DILACAK]    ?? 0);
+        $totalSedangDilacak   = (int) ($statusCounts[Alumni::STATUS_SEDANG_DILACAK]   ?? 0);
+        $totalTeridentifikasi = (int) ($statusCounts[Alumni::STATUS_TERIDENTIFIKASI]  ?? 0);
+        $totalPerluVerifikasi = (int) ($statusCounts[Alumni::STATUS_PERLU_VERIFIKASI] ?? 0);
+        $totalTidakDitemukan  = (int) ($statusCounts[Alumni::STATUS_TIDAK_DITEMUKAN]  ?? 0);
 
-        $totalSumberAktif = TrackingSource::where('is_active', true)->count();
+        $totalSumberAktif   = TrackingSource::where('is_active', true)->count();
         $totalHasilTracking = TrackingResult::count();
+        $rataRataConfidence = round((float) TrackingResult::avg('confidence_score'), 2);
 
         $hasilTerbaru = TrackingResult::with(['alumni', 'trackingSource'])
             ->latest()
@@ -30,14 +38,10 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        $rataRataConfidence = round(
-            (float) TrackingResult::avg('confidence_score'),
-            2
-        );
-
         return view('dashboard.index', compact(
             'totalAlumni',
             'totalBelumDilacak',
+            'totalSedangDilacak',
             'totalTeridentifikasi',
             'totalPerluVerifikasi',
             'totalTidakDitemukan',

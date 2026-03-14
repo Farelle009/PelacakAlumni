@@ -31,26 +31,19 @@ class AlumniController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        $statusOptions = [
-            Alumni::STATUS_BELUM_DILACAK,
-            Alumni::STATUS_TERIDENTIFIKASI,
-            Alumni::STATUS_PERLU_VERIFIKASI,
-            Alumni::STATUS_TIDAK_DITEMUKAN,
-        ];
-
-        return view('alumni.index', compact('alumni', 'search', 'status', 'statusOptions'));
+        return view('alumni.index', [
+            'alumni'        => $alumni,
+            'search'        => $search,
+            'status'        => $status,
+            'statusOptions' => $this->statusOptions(),
+        ]);
     }
 
     public function create(): View
     {
-        $statusOptions = [
-            Alumni::STATUS_BELUM_DILACAK,
-            Alumni::STATUS_TERIDENTIFIKASI,
-            Alumni::STATUS_PERLU_VERIFIKASI,
-            Alumni::STATUS_TIDAK_DITEMUKAN,
-        ];
-
-        return view('alumni.create', compact('statusOptions'));
+        return view('alumni.create', [
+            'statusOptions' => $this->statusOptions(),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -73,14 +66,10 @@ class AlumniController extends Controller
 
     public function edit(Alumni $alumni): View
     {
-        $statusOptions = [
-            Alumni::STATUS_BELUM_DILACAK,
-            Alumni::STATUS_TERIDENTIFIKASI,
-            Alumni::STATUS_PERLU_VERIFIKASI,
-            Alumni::STATUS_TIDAK_DITEMUKAN,
-        ];
-
-        return view('alumni.edit', compact('alumni', 'statusOptions'));
+        return view('alumni.edit', [
+            'alumni'        => $alumni,
+            'statusOptions' => $this->statusOptions(),
+        ]);
     }
 
     public function update(Request $request, Alumni $alumni): RedirectResponse
@@ -90,7 +79,7 @@ class AlumniController extends Controller
         $alumni->update($validated);
 
         return redirect()
-            ->route('alumni.index')
+            ->route('alumni.show', $alumni)
             ->with('success', 'Data alumni berhasil diperbarui.');
     }
 
@@ -103,6 +92,25 @@ class AlumniController extends Controller
             ->with('success', 'Data alumni berhasil dihapus.');
     }
 
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
+
+    /**
+     * All valid status options shown in dropdowns.
+     * STATUS_SEDANG_DILACAK is intentionally excluded from the manual-select
+     * list — it is set automatically by the tracking job, not by the user.
+     */
+    protected function statusOptions(): array
+    {
+        return [
+            Alumni::STATUS_BELUM_DILACAK,
+            Alumni::STATUS_TERIDENTIFIKASI,
+            Alumni::STATUS_PERLU_VERIFIKASI,
+            Alumni::STATUS_TIDAK_DITEMUKAN,
+        ];
+    }
+
     protected function validateRequest(Request $request, ?int $alumniId = null): array
     {
         return $request->validate([
@@ -112,19 +120,14 @@ class AlumniController extends Controller
                 'max:50',
                 Rule::unique('alumni', 'nim')->ignore($alumniId),
             ],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
-            'program_studi' => ['required', 'string', 'max:255'],
-            'tahun_lulus' => ['required', 'digits:4', 'integer', 'min:1900', 'max:' . date('Y')],
-            'email' => ['nullable', 'email', 'max:255'],
-            'kota' => ['nullable', 'string', 'max:255'],
+            'nama_lengkap'    => ['required', 'string', 'max:255'],
+            'program_studi'   => ['required', 'string', 'max:255'],
+            'tahun_lulus'     => ['required', 'digits:4', 'integer', 'min:1900', 'max:' . date('Y')],
+            'email'           => ['nullable', 'email', 'max:255'],
+            'kota'            => ['nullable', 'string', 'max:255'],
             'status_pelacakan' => [
                 'required',
-                Rule::in([
-                    Alumni::STATUS_BELUM_DILACAK,
-                    Alumni::STATUS_TERIDENTIFIKASI,
-                    Alumni::STATUS_PERLU_VERIFIKASI,
-                    Alumni::STATUS_TIDAK_DITEMUKAN,
-                ]),
+                Rule::in($this->statusOptions()),
             ],
         ]);
     }
