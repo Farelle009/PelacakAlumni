@@ -1,59 +1,164 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Pelacakan Alumni
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Website sederhana untuk membantu kampus melakukan pelacakan alumni dari berbagai sumber publik seperti LinkedIn, Google Scholar, ResearchGate, ORCID, dan GitHub.
 
-## About Laravel
+## Fitur Utama
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Dashboard ringkasan data alumni
+- CRUD data alumni
+- Menjalankan tracking alumni
+- Menyimpan hasil tracking
+- Menampilkan confidence score hasil pencarian
+- Menampilkan link sumber/profil alumni
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Teknologi
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Laravel
+- Blade
+- Tailwind CSS
+- MySQL
 
-## Learning Laravel
+## Struktur Sederhana Proyek
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+app/
+├── Http/Controllers/
+│   ├── AlumniController.php
+│   ├── TrackingController.php
+│   └── DashboardController.php
+├── Models/
+│   ├── Alumni.php
+│   ├── TrackingResult.php
+│   └── TrackingSource.php
+└── Services/
+    ├── QueryBuilderService.php
+    ├── IdentityScoringService.php
+    └── PublicProfileSearchService.php
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+resources/views/
+├── layouts/app.blade.php
+├── dashboard/index.blade.php
+├── alumni/index.blade.php
+├── alumni/create.blade.php
+├── alumni/edit.blade.php
+├── alumni/show.blade.php
+├── tracking/index.blade.php
+└── tracking/result.blade.php
+````
 
-## Laravel Sponsors
+## Instalasi
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+1. Clone project
 
-### Premium Partners
+```bash
+git clone https://github.com/username/nama-project.git
+cd nama-project
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+2. Install dependency
 
-## Contributing
+```bash
+composer install
+npm install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. Copy file environment
 
-## Code of Conduct
+```bash
+cp .env.example .env
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. Generate app key
 
-## Security Vulnerabilities
+```bash
+php artisan key:generate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. Atur database di file `.env`
 
-## License
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=pelacak_alumni
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+6. Jalankan migration
+
+```bash
+php artisan migrate
+```
+
+7. Jalankan seeder jika ada
+
+```bash
+php artisan db:seed
+```
+
+8. Jalankan project
+
+```bash
+php artisan serve
+npm run dev
+```
+
+## Tabel Utama
+
+### `alumni`
+
+Menyimpan data alumni seperti:
+
+* nim
+* nama_lengkap
+* program_studi
+* tahun_lulus
+* email
+* kota
+* status_pelacakan
+
+### `tracking_sources`
+
+Menyimpan daftar sumber tracking seperti:
+
+* LinkedIn
+* Google Scholar
+* ResearchGate
+* ORCID
+* GitHub
+
+### `tracking_results`
+
+Menyimpan hasil pencarian alumni seperti:
+
+* query
+* judul
+* snippet
+* url
+* nama_terdeteksi
+* afiliasi
+* jabatan
+* lokasi
+* confidence_score
+* status_verifikasi
+
+## Alur Sistem
+
+1. Admin menambahkan data alumni
+2. Sistem membuat query pencarian berdasarkan nama alumni
+3. Sistem mencari data dari sumber publik
+4. Sistem menyimpan hasil tracking
+5. Sistem menghitung confidence score
+6. Admin melihat hasil tracking dan profil yang ditemukan
+
+## Catatan
+
+* Sistem ini dibuat untuk penggunaan akademik dan pembelajaran
+* Hasil tracking bergantung pada data publik yang tersedia
+* Tidak semua sumber selalu dapat diakses secara otomatis
+* Beberapa hasil tetap perlu verifikasi manual
+
+## Lisensi
+
+Project ini digunakan untuk kebutuhan tugas dan pengembangan pembelajaran.
