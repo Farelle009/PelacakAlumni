@@ -54,3 +54,10 @@ Route::middleware(AdminAuthenticated::class)->group(function () {
         Route::put('/profile/password', [AdminAuthController::class, 'updatePassword'])->name('profile.password');
     });
 });
+
+use App\Http\Controllers\PddiktiController;
+
+Route::prefix('pddikti')->name('pddikti.')->group(function () {
+    Route::get('/', [PddiktiController::class, 'index'])->name('index');
+    Route::post('/search', [PddiktiController::class, 'search'])->name('search');
+});

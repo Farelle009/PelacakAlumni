@@ -16,6 +16,16 @@ class AlumniController extends Controller
         $status = $request->string('status')->toString();
 
         $alumni = Alumni::query()
+            ->select('alumni.*')
+            // Cek apakah data alumni ada di tabel alumni_details berdasarkan nama & nim
+            // Menggunakan LOWER dan TRIM untuk menghindari error huruf besar/kecil & spasi berlebih
+            ->selectSub(function ($query) {
+                $query->selectRaw('1')
+                      ->from('alumni_details')
+                      ->whereRaw('LOWER(TRIM(alumni_details.nim)) = LOWER(TRIM(alumni.nim))')
+                      ->whereRaw('LOWER(TRIM(alumni_details.nama)) = LOWER(TRIM(alumni.nama_lengkap))')
+                      ->limit(1);
+            }, 'is_pddikti_verified')
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($subQuery) use ($search) {
                     $subQuery->where('nama_lengkap', 'like', "%{$search}%")
@@ -96,11 +106,6 @@ class AlumniController extends Controller
     // Helpers
     // -------------------------------------------------------------------------
 
-    /**
-     * All valid status options shown in dropdowns.
-     * STATUS_SEDANG_DILACAK is intentionally excluded from the manual-select
-     * list — it is set automatically by the tracking job, not by the user.
-     */
     protected function statusOptions(): array
     {
         return [

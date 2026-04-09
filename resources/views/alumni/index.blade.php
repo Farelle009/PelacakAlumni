@@ -99,6 +99,7 @@
                                 <th class="px-6 py-4 text-left font-semibold text-slate-600">Program Studi</th>
                                 <th class="px-6 py-4 text-left font-semibold text-slate-600">Tahun Lulus</th>
                                 <th class="px-6 py-4 text-left font-semibold text-slate-600">Kota</th>
+                                <th class="px-6 py-4 text-left font-semibold text-slate-600">PDDIKTI</th>
                                 <th class="px-6 py-4 text-left font-semibold text-slate-600">Status</th>
                                 <th class="px-6 py-4 text-right font-semibold text-slate-600">Aksi</th>
                             </tr>
@@ -133,6 +134,25 @@
                                     <td class="px-6 py-4 text-slate-600">{{ $item->program_studi }}</td>
                                     <td class="px-6 py-4 text-slate-600">{{ $item->tahun_lulus }}</td>
                                     <td class="px-6 py-4 text-slate-600">{{ $item->kota ?: '-' }}</td>
+
+                                    {{-- Kolom Status PDDIKTI --}}
+                                    <td class="px-6 py-4">
+                                        @if ($item->is_pddikti_verified)
+                                            <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                                                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                Terverifikasi
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/20">
+                                                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                                Belum
+                                            </span>
+                                        @endif
+                                    </td>
 
                                     {{-- Status Badge --}}
                                     <td class="px-6 py-4">
