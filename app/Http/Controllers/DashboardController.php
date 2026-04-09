@@ -25,6 +25,15 @@ class DashboardController extends Controller
         $totalPerluVerifikasi = (int) ($statusCounts[Alumni::STATUS_PERLU_VERIFIKASI] ?? 0);
         $totalTidakDitemukan  = (int) ($statusCounts[Alumni::STATUS_TIDAK_DITEMUKAN]  ?? 0);
 
+        // PDDIKTI Stats
+        $totalPddiktiTerverifikasi = Alumni::whereExists(function ($query) {
+            $query->selectRaw('1')
+                  ->from('alumni_details')
+                  ->whereRaw('LOWER(TRIM(alumni_details.nim)) = LOWER(TRIM(alumni.nim))')
+                  ->whereRaw('LOWER(TRIM(alumni_details.nama)) = LOWER(TRIM(alumni.nama_lengkap))');
+        })->count();
+        $totalPddiktiBelum = $totalAlumni - $totalPddiktiTerverifikasi;
+
         $totalSumberAktif   = TrackingSource::where('is_active', true)->count();
         $totalHasilTracking = TrackingResult::count();
         $rataRataConfidence = round((float) TrackingResult::avg('confidence_score'), 2);
@@ -34,7 +43,17 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        $alumniTerbaru = Alumni::latest()
+        // Include is_pddikti_verified for the dashboard table
+        $alumniTerbaru = Alumni::query()
+            ->select('alumni.*')
+            ->selectSub(function ($query) {
+                $query->selectRaw('1')
+                      ->from('alumni_details')
+                      ->whereRaw('LOWER(TRIM(alumni_details.nim)) = LOWER(TRIM(alumni.nim))')
+                      ->whereRaw('LOWER(TRIM(alumni_details.nama)) = LOWER(TRIM(alumni.nama_lengkap))')
+                      ->limit(1);
+            }, 'is_pddikti_verified')
+            ->latest()
             ->take(5)
             ->get();
 
@@ -45,6 +64,8 @@ class DashboardController extends Controller
             'totalTeridentifikasi',
             'totalPerluVerifikasi',
             'totalTidakDitemukan',
+            'totalPddiktiTerverifikasi',
+            'totalPddiktiBelum',
             'totalSumberAktif',
             'totalHasilTracking',
             'hasilTerbaru',

@@ -6,6 +6,7 @@
 
 @section('content')
     <div class="space-y-6">
+        <!-- Main Stats -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
                 <p class="text-sm text-slate-500">Total Alumni</p>
@@ -32,6 +33,7 @@
             </div>
         </div>
 
+        <!-- Tracking Status Stats -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
             <div class="rounded-2xl border border-slate-200 bg-white p-5">
                 <p class="text-sm text-slate-500">Belum Dilacak</p>
@@ -74,7 +76,38 @@
             </div>
         </div>
 
+        <!-- PDDIKTI Stats -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="rounded-2xl border border-sky-200 bg-white p-5">
+                <p class="text-sm text-slate-500">Terverifikasi PDDIKTI</p>
+                <h4 class="mt-2 text-2xl font-semibold text-sky-700">{{ $totalPddiktiTerverifikasi }}</h4>
+                <div class="mt-4">
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-700">
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Sesuai dengan pangkalan data
+                    </span>
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                <p class="text-sm text-slate-500">Belum Terverifikasi PDDIKTI</p>
+                <h4 class="mt-2 text-2xl font-semibold text-slate-900">{{ $totalPddiktiBelum }}</h4>
+                <div class="mt-4">
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Data belum cocok / tidak ditemukan
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Latest Data Tables -->
         <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+            <!-- Alumni Terbaru -->
             <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
                 <div class="mb-5 flex items-center justify-between">
                     <div>
@@ -100,7 +133,7 @@
                                     <tr>
                                         <th class="px-4 py-3 text-left font-semibold text-slate-600">Nama</th>
                                         <th class="px-4 py-3 text-left font-semibold text-slate-600">NIM</th>
-                                        <th class="px-4 py-3 text-left font-semibold text-slate-600">Prodi</th>
+                                        <th class="px-4 py-3 text-left font-semibold text-slate-600">PDDIKTI</th>
                                         <th class="px-4 py-3 text-left font-semibold text-slate-600">Status</th>
                                     </tr>
                                 </thead>
@@ -114,22 +147,37 @@
                                                 </a>
                                             </td>
                                             <td class="px-4 py-3 text-slate-600">{{ $item->nim }}</td>
-                                            <td class="px-4 py-3 text-slate-600">{{ $item->program_studi }}</td>
+                                            
+                                            <td class="px-4 py-3">
+                                                @if ($item->is_pddikti_verified)
+                                                    <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                        Valid
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-1 text-[10px] font-medium text-slate-600 ring-1 ring-inset ring-slate-500/20">
+                                                        Belum
+                                                    </span>
+                                                @endif
+                                            </td>
+
                                             <td class="px-4 py-3">
                                                 @if ($item->status_pelacakan === \App\Models\Alumni::STATUS_TERIDENTIFIKASI)
-                                                    <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+                                                    <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-medium text-emerald-700">
                                                         {{ $item->status_pelacakan }}
                                                     </span>
                                                 @elseif ($item->status_pelacakan === \App\Models\Alumni::STATUS_PERLU_VERIFIKASI)
-                                                    <span class="inline-flex rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
+                                                    <span class="inline-flex rounded-full bg-amber-50 px-3 py-1 text-[10px] font-medium text-amber-700">
                                                         {{ $item->status_pelacakan }}
                                                     </span>
                                                 @elseif ($item->status_pelacakan === \App\Models\Alumni::STATUS_TIDAK_DITEMUKAN)
-                                                    <span class="inline-flex rounded-full bg-rose-50 px-3 py-1 text-xs font-medium text-rose-700">
+                                                    <span class="inline-flex rounded-full bg-rose-50 px-3 py-1 text-[10px] font-medium text-rose-700">
                                                         {{ $item->status_pelacakan }}
                                                     </span>
                                                 @else
-                                                    <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                                                    <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-[10px] font-medium text-slate-700">
                                                         {{ $item->status_pelacakan }}
                                                     </span>
                                                 @endif
@@ -143,6 +191,7 @@
                 @endif
             </div>
 
+            <!-- Hasil Tracking Terbaru -->
             <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
                 <div class="mb-5 flex items-center justify-between">
                     <div>
